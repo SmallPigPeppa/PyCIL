@@ -25,6 +25,9 @@ def _train(args):
         pass
     logfilename = 'logs/{}/{}_{}_{}_{}_{}_{}_{}'.format(args['model_name'], args['prefix'], args['seed'], args['model_name'], args['convnet_type'],
                                                 args['dataset'], args['init_cls'], args['increment'])
+
+    if not os.path.exists(logfilename+'.log'):
+        os.makedirs(os.path.dirname(logfilename+'.log'))
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s [%(filename)s] => %(message)s',
