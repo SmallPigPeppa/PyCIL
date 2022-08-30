@@ -9,10 +9,13 @@ from models.replay import Replay
 from models.bic import BiC
 from models.podnet import PODNet
 from models.wa import WA
+from models.ucir import UCIR
 
 
 def get_model(model_name, args):
     name = model_name.lower()
+    if name=='ucir':
+        return UCIR(args)
     if name == 'icarl':
         return iCaRL(args)
     elif name == 'bic':
