@@ -58,7 +58,7 @@ def _train(args):
             del state[k]
         model._network.convnet.load_state_dict(state, strict=False)
         print(str(list(state.keys())))
-        print(model._network.convnet)
+        print(str([name for name, param in model._network.convnet.named_parameters()]))
 
 
     cnn_curve, nme_curve = {'top1': [], 'top5': []}, {'top1': [], 'top5': []}
