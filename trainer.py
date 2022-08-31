@@ -57,7 +57,7 @@ def _train(args):
                 state[k.replace("backbone.", "")] = state[k]
             del state[k]
         model._network.convnet.load_state_dict(state, strict=False)
-        print(state)
+        print(str(list(state.keys())))
         print(model._network.convnet)
 
 
