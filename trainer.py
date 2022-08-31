@@ -42,7 +42,7 @@ def _train(args):
     print_args(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'])
     model = factory.get_model(args['model_name'], args)
-    if args.pretrained_model is not None:
+    if args['pretrained_model'] is not None:
         import warnings
         print(f"load pretrained model from {args.pretrained_model}")
         ckpt_path = args.pretrained_model
