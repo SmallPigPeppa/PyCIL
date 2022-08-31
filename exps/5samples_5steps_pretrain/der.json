@@ -1,5 +1,5 @@
 {
-    "prefix": "5samples",
+    "prefix": "pretrained_5samples",
     "dataset": "cifar100",
     "memory_size": 500,
     "memory_per_class": 5,
