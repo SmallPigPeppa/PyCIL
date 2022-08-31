@@ -42,6 +42,22 @@ def _train(args):
     print_args(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'])
     model = factory.get_model(args['model_name'], args)
+    if args.pretrained_model is not None:
+        import warnings
+        print(f"load pretrained model from {args.pretrained_model}")
+        ckpt_path = args.pretrained_model
+        state = torch.load(ckpt_path)["state_dict"]
+        for k in list(state.keys()):
+            if "encoder" in k:
+                state[k.replace("encoder", "backbone")] = state[k]
+                warnings.warn(
+                    "You are using an older checkpoint. Use a new one as some issues might arrise."
+                )
+            if "backbone" in k:
+                state[k.replace("backbone.", "")] = state[k]
+            del state[k]
+        model._network.load_state_dict(state, strict=False)
+
 
     cnn_curve, nme_curve = {'top1': [], 'top5': []}, {'top1': [], 'top5': []}
     for task in range(data_manager.nb_tasks):
