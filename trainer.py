@@ -44,8 +44,8 @@ def _train(args):
     model = factory.get_model(args['model_name'], args)
     if args['pretrained_model'] is not None:
         import warnings
-        print(f"load pretrained model from {args.pretrained_model}")
-        ckpt_path = args.pretrained_model
+        print(f"load pretrained model from {args['pretrained_model']}")
+        ckpt_path = args['pretrained_model']
         state = torch.load(ckpt_path)["state_dict"]
         for k in list(state.keys()):
             if "encoder" in k:
