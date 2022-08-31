@@ -23,11 +23,12 @@ def _train(args):
         os.mkdir("logs/{}".format(args['model_name']))
     except:
         pass
-    logfilename = 'logs/{}/{}_{}_{}_{}_{}_{}_{}'.format(args['model_name'], args['prefix'], args['seed'], args['model_name'], args['convnet_type'],
-                                                args['dataset'], args['init_cls'], args['increment'])
+    logfilename = 'logs/{}/{}_{}_{}_{}_{}_{}_{}'.format(args['model_name'], args['prefix'], args['seed'],
+                                                        args['model_name'], args['convnet_type'],
+                                                        args['dataset'], args['init_cls'], args['increment'])
 
-    if not os.path.exists(logfilename+'.log'):
-        os.makedirs(os.path.dirname(logfilename+'.log'),exist_ok=True)
+    if not os.path.exists(logfilename + '.log'):
+        os.makedirs(os.path.dirname(logfilename + '.log'), exist_ok=True)
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s [%(filename)s] => %(message)s',
@@ -42,7 +43,8 @@ def _train(args):
     print_args(args)
     data_manager = DataManager(args['dataset'], args['shuffle'], args['seed'], args['init_cls'], args['increment'])
     model = factory.get_model(args['model_name'], args)
-    if args['pretrained_model'] is not None:
+    # if args['pretrained_model'] is not None:
+    if 'pretrained_model' in args.keys():
         import warnings
         print(f"load pretrained model from {args['pretrained_model']}")
         ckpt_path = args['pretrained_model']
@@ -59,7 +61,6 @@ def _train(args):
         model._network.convnet.load_state_dict(state, strict=False)
         # print(str(list(state.keys())))
         # print(str([name for name, param in model._network.convnet.named_parameters()]))
-
 
     cnn_curve, nme_curve = {'top1': [], 'top5': []}, {'top1': [], 'top5': []}
     for task in range(data_manager.nb_tasks):
