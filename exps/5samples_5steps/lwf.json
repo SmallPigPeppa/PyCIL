@@ -9,6 +9,6 @@
     "increment": 10,
     "model_name": "lwf",
     "convnet_type": "resnet50_cifar",
-    "device": ["0","1","2","3","4","5","6","7"],
+    "device": ["0","1","2","3"],
     "seed": [1993]
 }
