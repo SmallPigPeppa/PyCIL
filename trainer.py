@@ -57,8 +57,8 @@ def _train(args):
                 state[k.replace("backbone.", "")] = state[k]
             del state[k]
         model._network.convnet.load_state_dict(state, strict=False)
-        # print(state)
-        # print(model._network)
+        print(state)
+        print(model._network.convnet)
 
 
     cnn_curve, nme_curve = {'top1': [], 'top5': []}, {'top1': [], 'top5': []}
