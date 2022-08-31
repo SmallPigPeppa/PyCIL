@@ -11,3 +11,6 @@ python main.py --config=./exps/5samples_10steps/der.json
 python main.py --config=./exps/5samples_10steps/lwf.json
 python main.py --config=./exps/5samples_10steps/icarl.json
 python main.py --config=./exps/5samples_10steps/ucir.json
+
+
+#CUDA_VISIBLE_DEVICES=4,5,6,7

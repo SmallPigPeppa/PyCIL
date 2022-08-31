@@ -27,7 +27,7 @@ def _train(args):
                                                 args['dataset'], args['init_cls'], args['increment'])
 
     if not os.path.exists(logfilename+'.log'):
-        os.makedirs(os.path.dirname(logfilename+'.log'))
+        os.makedirs(os.path.dirname(logfilename+'.log'),exist_ok=True)
     logging.basicConfig(
         level=logging.INFO,
         format='%(asctime)s [%(filename)s] => %(message)s',
