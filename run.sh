@@ -1,5 +1,5 @@
 conda activate torch
-python main.py --config=./exps/5samples_5steps/podnet.json
+#python main.py --config=./exps/5samples_5steps/podnet.json
 python main.py --config=./exps/5samples_5steps/coil.json
 python main.py --config=./exps/5samples_5steps/der.json
 python main.py --config=./exps/5samples_5steps/lwf.json
