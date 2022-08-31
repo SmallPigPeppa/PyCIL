@@ -4,7 +4,8 @@ https://github.com/pytorch/vision/blob/master/torchvision/models/resnet.py
 '''
 import torch
 import torch.nn as nn
-from torchvision.models.utils import load_state_dict_from_url
+# from torchvision.models.utils import load_state_dict_from_url
+from torch.hub import load_state_dict_from_url
 
 
 __all__ = ['resnet50']
