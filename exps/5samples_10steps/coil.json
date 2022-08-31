@@ -1,5 +1,5 @@
 {
-    "prefix": "reproduce",
+    "prefix": "5samples",
     "dataset": "cifar100",
     "memory_size": 500,
     "memory_per_class": 5,
