@@ -9,10 +9,9 @@ from torch.utils.data import DataLoader
 from models.base import BaseLearner
 from utils.inc_net import CosineIncrementalNet
 from utils.toolkit import tensor2numpy, target2onehot
-import random
+
 EPSILON = 1e-8
-import csv
-import pandas as pd
+
 # ImageNet1omp000, ResNet18
 
 # epochs = 90
