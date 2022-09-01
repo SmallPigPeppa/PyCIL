@@ -58,7 +58,10 @@ def _train(args):
             if "backbone" in k:
                 state[k.replace("backbone.", "")] = state[k]
             del state[k]
-        model._network.convnet.load_state_dict(state, strict=False)
+        if args['model_name']=='der':
+            model._network.convnets[0].load_state_dict(state, strict=False)
+        else:
+            model._network.convnet.load_state_dict(state, strict=False)
         # print(str(list(state.keys())))
         # print(str([name for name, param in model._network.convnet.named_parameters()]))
 
