@@ -43,10 +43,10 @@ num_workers = 4
 class UCIR(BaseLearner):
     def __init__(self, args):
         super().__init__(args)
-        self.args = args
-        self._network = CosineIncrementalNet(args.convnet_type, args.method, pretrained=False)
+        # self.args = args
+        self._network = CosineIncrementalNet(args["convnet_type"], pretrained=False)
         self._class_means = None
-        self.method = args.method
+        self.method = args["method"]
         self.criterion = torch.nn.CrossEntropyLoss()
         self.augclass = 0
 
