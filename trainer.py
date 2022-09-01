@@ -59,7 +59,7 @@ def _train(args):
                 state[k.replace("backbone.", "")] = state[k]
             del state[k]
         if args['model_name']=='der':
-            model._network.convnets[0].load_state_dict(state, strict=False)
+            model._network.use_ssl_encoder=True
         else:
             model._network.convnet.load_state_dict(state, strict=False)
         # print(str(list(state.keys())))
