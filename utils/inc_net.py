@@ -1,4 +1,5 @@
 import copy
+import logging
 import torch
 from torch import nn
 from convs.cifar_resnet import resnet32
@@ -12,38 +13,27 @@ from convs.linears import SimpleLinear, SplitCosineLinear, CosineLinear
 
 def get_convnet(convnet_type, pretrained=False):
     name = convnet_type.lower()
-    if name == 'resnet32':
+    if name == "resnet32":
         return resnet32()
-    elif name == 'resnet18':
+    elif name == "resnet18":
         return resnet18(pretrained=pretrained)
-    elif name == 'resnet34':
+    elif name == "resnet34":
         return resnet34(pretrained=pretrained)
-    elif name == 'resnet50':
+    elif name == "resnet50":
         return resnet50(pretrained=pretrained)
-    elif name == 'cosine_resnet18':
+    elif name == "cosine_resnet18":
         return cosine_resnet18(pretrained=pretrained)
-    elif name == 'cosine_resnet32':
+    elif name == "cosine_resnet32":
         return cosine_resnet32()
-    elif name == 'cosine_resnet34':
+    elif name == "cosine_resnet34":
         return cosine_resnet34(pretrained=pretrained)
-    elif name == 'cosine_resnet50':
+    elif name == "cosine_resnet50":
         return cosine_resnet50(pretrained=pretrained)
-    elif name == 'cosine_resnet50_cifar':
-        resnet_cifar = cosine_resnet50(pretrained=pretrained)
-        resnet_cifar.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
-        resnet_cifar.maxpool = nn.Identity()
-        return resnet_cifar
-    elif name == 'resnet50_cifar':
-        resnet_cifar = resnet50(pretrained=pretrained)
-        resnet_cifar.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
-        resnet_cifar.maxpool = nn.Identity()
-        return resnet_cifar
     else:
-        raise NotImplementedError('Unknown type {}'.format(convnet_type))
+        raise NotImplementedError("Unknown type {}".format(convnet_type))
 
 
 class BaseNet(nn.Module):
-
     def __init__(self, convnet_type, pretrained):
         super(BaseNet, self).__init__()
 
@@ -55,18 +45,18 @@ class BaseNet(nn.Module):
         return self.convnet.out_dim
 
     def extract_vector(self, x):
-        return self.convnet(x)['features']
+        return self.convnet(x)["features"]
 
     def forward(self, x):
         x = self.convnet(x)
-        out = self.fc(x['features'])
-        '''
+        out = self.fc(x["features"])
+        """
         {
             'fmaps': [x_1, x_2, ..., x_n],
             'features': features
             'logits': logits
         }
-        '''
+        """
         out.update(x)
 
         return out
@@ -89,11 +79,10 @@ class BaseNet(nn.Module):
 
 
 class IncrementalNet(BaseNet):
-
     def __init__(self, convnet_type, pretrained, gradcam=False):
         super().__init__(convnet_type, pretrained)
         self.gradcam = gradcam
-        if hasattr(self, 'gradcam') and self.gradcam:
+        if hasattr(self, "gradcam") and self.gradcam:
             self._gradcam_hooks = [None, None]
             self.set_gradcam_hook()
 
@@ -111,12 +100,12 @@ class IncrementalNet(BaseNet):
 
     def weight_align(self, increment):
         weights = self.fc.weight.data
-        newnorm = (torch.norm(weights[-increment:, :], p=2, dim=1))
-        oldnorm = (torch.norm(weights[:-increment, :], p=2, dim=1))
+        newnorm = torch.norm(weights[-increment:, :], p=2, dim=1)
+        oldnorm = torch.norm(weights[:-increment, :], p=2, dim=1)
         meannew = torch.mean(newnorm)
         meanold = torch.mean(oldnorm)
         gamma = meanold / meannew
-        print('alignweights,gamma=', gamma)
+        print("alignweights,gamma=", gamma)
         self.fc.weight.data[-increment:, :] *= gamma
 
     def generate_fc(self, in_dim, out_dim):
@@ -126,11 +115,11 @@ class IncrementalNet(BaseNet):
 
     def forward(self, x):
         x = self.convnet(x)
-        out = self.fc(x['features'])
+        out = self.fc(x["features"])
         out.update(x)
-        if hasattr(self, 'gradcam') and self.gradcam:
-            out['gradcam_gradients'] = self._gradcam_gradients
-            out['gradcam_activations'] = self._gradcam_activations
+        if hasattr(self, "gradcam") and self.gradcam:
+            out["gradcam_gradients"] = self._gradcam_gradients
+            out["gradcam_activations"] = self._gradcam_activations
 
         return out
 
@@ -152,12 +141,15 @@ class IncrementalNet(BaseNet):
             self._gradcam_activations[0] = output
             return None
 
-        self._gradcam_hooks[0] = self.convnet.last_conv.register_backward_hook(backward_hook)
-        self._gradcam_hooks[1] = self.convnet.last_conv.register_forward_hook(forward_hook)
+        self._gradcam_hooks[0] = self.convnet.last_conv.register_backward_hook(
+            backward_hook
+        )
+        self._gradcam_hooks[1] = self.convnet.last_conv.register_forward_hook(
+            forward_hook
+        )
 
 
 class CosineIncrementalNet(BaseNet):
-
     def __init__(self, convnet_type, pretrained, nb_proxy=1):
         super().__init__(convnet_type, pretrained)
         self.nb_proxy = nb_proxy
@@ -183,7 +175,9 @@ class CosineIncrementalNet(BaseNet):
         else:
             prev_out_features = self.fc.out_features // self.nb_proxy
             # prev_out_features = self.fc.out_features
-            fc = SplitCosineLinear(in_dim, prev_out_features, out_dim - prev_out_features, self.nb_proxy)
+            fc = SplitCosineLinear(
+                in_dim, prev_out_features, out_dim - prev_out_features, self.nb_proxy
+            )
 
         return fc
 
@@ -196,7 +190,9 @@ class BiasLayer(nn.Module):
 
     def forward(self, x, low_range, high_range):
         ret_x = x.clone()
-        ret_x[:, low_range:high_range] = self.alpha * x[:, low_range:high_range] + self.beta
+        ret_x[:, low_range:high_range] = (
+            self.alpha * x[:, low_range:high_range] + self.beta
+        )
         return ret_x
 
     def get_params(self):
@@ -214,12 +210,14 @@ class IncrementalNetWithBias(BaseNet):
 
     def forward(self, x):
         x = self.convnet(x)
-        out = self.fc(x['features'])
+        out = self.fc(x["features"])
         if self.bias_correction:
-            logits = out['logits']
+            logits = out["logits"]
             for i, layer in enumerate(self.bias_layers):
-                logits = layer(logits, sum(self.task_sizes[:i]), sum(self.task_sizes[:i + 1]))
-            out['logits'] = logits
+                logits = layer(
+                    logits, sum(self.task_sizes[:i]), sum(self.task_sizes[: i + 1])
+                )
+            out["logits"] = logits
 
         out.update(x)
 
@@ -276,27 +274,27 @@ class DERNet(nn.Module):
         return self.out_dim * len(self.convnets)
 
     def extract_vector(self, x):
-        features = [convnet(x)['features'] for convnet in self.convnets]
+        features = [convnet(x)["features"] for convnet in self.convnets]
         features = torch.cat(features, 1)
         return features
 
     def forward(self, x):
-        features = [convnet(x)['features'] for convnet in self.convnets]
+        features = [convnet(x)["features"] for convnet in self.convnets]
         features = torch.cat(features, 1)
 
         out = self.fc(features)  # {logics: self.fc(features)}
 
-        aux_logits = self.aux_fc(features[:, -self.out_dim:])["logits"]
+        aux_logits = self.aux_fc(features[:, -self.out_dim :])["logits"]
 
         out.update({"aux_logits": aux_logits, "features": features})
         return out
-        '''
+        """
         {
             'features': features
             'logits': logits
             'aux_logits':aux_logits
         }
-        '''
+        """
 
     def update_fc(self, nb_classes):
         if len(self.convnets) == 0:
@@ -312,7 +310,7 @@ class DERNet(nn.Module):
             nb_output = self.fc.out_features
             weight = copy.deepcopy(self.fc.weight.data)
             bias = copy.deepcopy(self.fc.bias.data)
-            fc.weight.data[:nb_output, :self.feature_dim - self.out_dim] = weight
+            fc.weight.data[:nb_output, : self.feature_dim - self.out_dim] = weight
             fc.bias.data[:nb_output] = bias
 
         del self.fc
@@ -345,17 +343,16 @@ class DERNet(nn.Module):
 
     def weight_align(self, increment):
         weights = self.fc.weight.data
-        newnorm = (torch.norm(weights[-increment:, :], p=2, dim=1))
-        oldnorm = (torch.norm(weights[:-increment, :], p=2, dim=1))
+        newnorm = torch.norm(weights[-increment:, :], p=2, dim=1)
+        oldnorm = torch.norm(weights[:-increment, :], p=2, dim=1)
         meannew = torch.mean(newnorm)
         meanold = torch.mean(oldnorm)
         gamma = meanold / meannew
-        print('alignweights,gamma=', gamma)
+        print("alignweights,gamma=", gamma)
         self.fc.weight.data[-increment:, :] *= gamma
 
 
 class SimpleCosineIncrementalNet(BaseNet):
-
     def __init__(self, convnet_type, pretrained):
         super().__init__(convnet_type, pretrained)
 
@@ -366,6 +363,7 @@ class SimpleCosineIncrementalNet(BaseNet):
             weight = copy.deepcopy(self.fc.weight.data)
             fc.sigma.data = self.fc.sigma.data
             if nextperiod_initialization is not None:
+
                 weight = torch.cat([weight, nextperiod_initialization])
             fc.weight = nn.Parameter(weight)
         del self.fc
@@ -374,3 +372,96 @@ class SimpleCosineIncrementalNet(BaseNet):
     def generate_fc(self, in_dim, out_dim):
         fc = CosineLinear(in_dim, out_dim)
         return fc
+
+
+class FOSTERNet(nn.Module):
+    def __init__(self, convnet_type, pretrained):
+        super(FOSTERNet, self).__init__()
+        self.convnet_type = convnet_type
+        self.convnets = nn.ModuleList()
+        self.pretrained = pretrained
+        self.out_dim = None
+        self.fc = None
+        self.fe_fc = None
+        self.task_sizes = []
+        self.oldfc = None
+
+    @property
+    def feature_dim(self):
+        if self.out_dim is None:
+            return 0
+        return self.out_dim * len(self.convnets)
+
+    def extract_vector(self, x):
+        features = [convnet(x)["features"] for convnet in self.convnets]
+        features = torch.cat(features, 1)
+        return features
+
+    def forward(self, x):
+        features = [convnet(x)["features"] for convnet in self.convnets]
+        features = torch.cat(features, 1)
+        out = self.fc(features)
+        fe_logits = self.fe_fc(features[:, -self.out_dim :])["logits"]
+
+        out.update({"fe_logits": fe_logits, "features": features})
+
+        if self.oldfc is not None:
+            old_logits = self.oldfc(features[:, : -self.out_dim])["logits"]
+            out.update({"old_logits": old_logits})
+
+        out.update({"eval_logits": out["logits"]})
+        return out
+
+    def update_fc(self, nb_classes):
+        self.convnets.append(get_convnet(self.convnet_type))
+        if self.out_dim is None:
+            self.out_dim = self.convnets[-1].out_dim
+        fc = self.generate_fc(self.feature_dim, nb_classes)
+        if self.fc is not None:
+            nb_output = self.fc.out_features
+            weight = copy.deepcopy(self.fc.weight.data)
+            bias = copy.deepcopy(self.fc.bias.data)
+            fc.weight.data[:nb_output, : self.feature_dim - self.out_dim] = weight
+            fc.bias.data[:nb_output] = bias
+            self.convnets[-1].load_state_dict(self.convnets[-2].state_dict())
+
+        self.oldfc = self.fc
+        self.fc = fc
+        new_task_size = nb_classes - sum(self.task_sizes)
+        self.task_sizes.append(new_task_size)
+        self.fe_fc = self.generate_fc(self.out_dim, nb_classes)
+
+    def generate_fc(self, in_dim, out_dim):
+        fc = SimpleLinear(in_dim, out_dim)
+        return fc
+
+    def copy(self):
+        return copy.deepcopy(self)
+
+    def copy_fc(self, fc):
+        weight = copy.deepcopy(fc.weight.data)
+        bias = copy.deepcopy(fc.bias.data)
+        n, m = weight.shape[0], weight.shape[1]
+        self.fc.weight.data[:n, :m] = weight
+        self.fc.bias.data[:n] = bias
+
+    def freeze(self):
+        for param in self.parameters():
+            param.requires_grad = False
+        self.eval()
+        return self
+
+    def freeze_conv(self):
+        for param in self.convnets.parameters():
+            param.requires_grad = False
+        self.convnets.eval()
+
+    def weight_align(self, old, increment, value):
+        weights = self.fc.weight.data
+        newnorm = torch.norm(weights[-increment:, :], p=2, dim=1)
+        oldnorm = torch.norm(weights[:-increment, :], p=2, dim=1)
+        meannew = torch.mean(newnorm)
+        meanold = torch.mean(oldnorm)
+        gamma = meanold / meannew * (value ** (old / increment))
+        logging.info("align weights, gamma = {} ".format(gamma))
+        self.fc.weight.data[-increment:, :] *= gamma
