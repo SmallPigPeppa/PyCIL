@@ -18,7 +18,8 @@ lrate = 0.1
 milestones = [80, 120]
 lrate_decay = 0.1
 batch_size = 128
-memory_size = 2000
+# memory_size = 2000
+memory_size = 500
 T = 2
 
 
@@ -26,8 +27,10 @@ T = 2
 class COIL(BaseLearner):
 
     def __init__(self, args):
-        super().__init__(args)
+        super().__init__()
         self._network = SimpleCosineIncrementalNet(args['convnet_type'], False)
+        # self._network = SimpleCosineIncrementalNet(args['convnet_type'], Truems)
+        self._device = args['device']
         self.data_manager=None
         self.nextperiod_initialization=None
         self.sinkhorn_reg=args['sinkhorn']
@@ -83,7 +86,8 @@ class COIL(BaseLearner):
     def incremental_train(self, data_manager):
         self._cur_task += 1
         self._total_classes = self._known_classes + data_manager.get_task_size(self._cur_task)
-        
+        # self._total_classes = 100
+
         self._network.update_fc(self._total_classes, self.nextperiod_initialization)
         self.data_manager=data_manager
 
@@ -174,44 +178,3 @@ class COIL(BaseLearner):
         logging.info(info)
 
 
-    def _extract_class_means(self,data_manager,low,high):
-        self._ot_prototype_means = np.zeros((data_manager.get_total_classnum(), self._network.feature_dim))
-        with torch.no_grad():
-            for class_idx in range(low, high):
-                data, targets, idx_dataset = data_manager.get_dataset(np.arange(class_idx, class_idx+1), source='train',
-                                                                    mode='test', ret_data=True)
-                idx_loader = DataLoader(idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
-                vectors, _ = self._extract_vectors(idx_loader)
-                vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
-                class_mean = np.mean(vectors, axis=0)
-                class_mean = class_mean / (np.linalg.norm(class_mean))
-                self._ot_prototype_means[class_idx, :] = class_mean
-        self._network.train()
-    def _extract_class_means_with_memory(self,data_manager,low,high):
-        
-        self._ot_prototype_means = np.zeros((data_manager.get_total_classnum(), self._network.feature_dim))
-        memoryx,memoryy=self._data_memory,self._targets_memory
-        with torch.no_grad():
-            for class_idx in range(0,low):
-                idxes = np.where(np.logical_and(memoryy >= class_idx, memoryy < class_idx+1))[0]
-                data, targets = memoryx[idxes],memoryy[idxes]
-                #idx_dataset=TensorDataset(data,targets)
-                #idx_loader = DataLoader(idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
-                _,_,idx_dataset=data_manager.get_dataset([], source='train', appendent=(data,targets) ,mode='test', ret_data=True)
-                idx_loader = DataLoader(idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
-                vectors, _ = self._extract_vectors(idx_loader)
-                vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
-                class_mean = np.mean(vectors, axis=0)
-                class_mean = class_mean / np.linalg.norm(class_mean)
-                self._ot_prototype_means[class_idx, :] = class_mean
-
-            for class_idx in range(low, high):
-                data, targets, idx_dataset = data_manager.get_dataset(np.arange(class_idx, class_idx+1), source='train',
-                                                                    mode='test', ret_data=True)
-                idx_loader = DataLoader(idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4)
-                vectors, _ = self._extract_vectors(idx_loader)
-                vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
-                class_mean = np.mean(vectors, axis=0)
-                class_mean = class_mean / np.linalg.norm(class_mean)
-                self._ot_prototype_means[class_idx, :] = class_mean
-        self._network.train()
