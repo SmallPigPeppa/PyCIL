@@ -14,3 +14,4 @@ python main.py --config=./exps/5samples_10steps/ucir.json
 
 
 #CUDA_VISIBLE_DEVICES=4,5,6,7
+#CUDA_VISIBLE_DEVICES=3,4,5,6
