@@ -1,6 +1,6 @@
 {
     "prefix": "10samples",
-    "dataset": "imangenet100",
+    "dataset": "imagenet100",
     "memory_size": 1000,
     "memory_per_class": 10,
     "fixed_memory": true,
