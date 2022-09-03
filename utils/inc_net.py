@@ -307,7 +307,7 @@ class DERNet(nn.Module):
             self.convnets.append(get_convnet(self.convnet_type))
             if self.use_ssl_encoder:
                 import warnings
-                ckpt_path = "/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt"
+                ckpt_path = "/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt"
                 print(f"load pretrained model from {ckpt_path}")
                 state = torch.load(ckpt_path)["state_dict"]
                 for k in list(state.keys()):
