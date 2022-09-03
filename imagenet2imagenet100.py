@@ -62,7 +62,7 @@ imagenet100_classes=list(dict_imagenet100.keys())
 all_classes=sorted(os.listdir(dir_path))
 for class_i in all_classes:
     if class_i not in dict_imagenet100:
-        os.unlink(os.joint(dir_path,'train',class_i))
-        os.unlink(os.joint(dir_path,'val',class_i))
+        os.unlink(os.path.join(dir_path,'train',class_i))
+        os.unlink(os.path.join(dir_path,'val',class_i))
 
 
