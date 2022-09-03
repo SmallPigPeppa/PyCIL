@@ -1,0 +1,14 @@
+{
+    "prefix": "10samples",
+    "dataset": "cifar100",
+    "memory_size": 1000,
+    "memory_per_class": 10,
+    "fixed_memory": true,
+    "shuffle": true,
+    "init_cls": 50,
+    "increment": 10,
+    "model_name": "lwf",
+    "convnet_type": "resnet50_cifar",
+    "device": ["0","1"],
+    "seed": [1993]
+}
