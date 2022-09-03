@@ -12,15 +12,15 @@ from utils.toolkit import tensor2numpy, target2onehot
 
 EPSILON = 1e-8
 
-# # ImageNet1000, ResNet50
-# epochs = 160
-# lrate = 0.1
-# batch_size = 128
-# lamda_base = 10
-# K = 2
-# margin = 0.5
-# weight_decay = 3e-4
-# num_workers = 16
+# ImageNet1000, ResNet50
+epochs = 160
+lrate = 0.1
+batch_size = 128
+lamda_base = 10
+K = 2
+margin = 0.5
+weight_decay = 3e-4
+num_workers = 16
 
 # # ImageNet1000, ResNet18
 #
@@ -36,17 +36,17 @@ EPSILON = 1e-8
 # num_workers = 16
 
 
-# CIFAR100, ResNet32
-epochs = 160
-lrate = 0.1
-milestones = [80, 120]
-lrate_decay = 0.1
-batch_size = 128*4
-lamda_base = 5
-K = 2
-margin = 0.5
-weight_decay = 3e-4
-num_workers = 4
+# # CIFAR100, ResNet32
+# epochs = 160
+# lrate = 0.1
+# milestones = [80, 120]
+# lrate_decay = 0.1
+# batch_size = 128*4
+# lamda_base = 5
+# K = 2
+# margin = 0.5
+# weight_decay = 3e-4
+# num_workers = 4
 
 
 class UCIR(BaseLearner):
