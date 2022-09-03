@@ -1,0 +1,14 @@
+{
+    "prefix": "5samples",
+    "dataset": "imangenet100",
+    "memory_size": 500,
+    "memory_per_class": 5,
+    "fixed_memory": true,
+    "shuffle": true,
+    "init_cls": 50,
+    "increment": 10,
+    "model_name": "lwf",
+    "convnet_type": "resnet50",
+    "device": ["0","1"],
+    "seed": [1993]
+}
