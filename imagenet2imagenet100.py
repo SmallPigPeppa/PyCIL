@@ -59,7 +59,7 @@ dict_imagenet100 = {"n01968897": "chambered nautilus, pearly nautilus, nautilus"
 import os
 dir_path="/mnt/mmtech01/usr/liuwenzhuo/torch_ds/imagenet100"
 imagenet100_classes=list(dict_imagenet100.keys())
-all_classes=sorted(os.listdir(dir_path))
+all_classes=sorted(os.listdir(os.path.join(dir_path,'train')))
 for class_i in all_classes:
     if class_i not in dict_imagenet100:
         os.unlink(os.path.join(dir_path,'train',class_i))
