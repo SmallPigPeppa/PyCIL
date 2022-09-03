@@ -98,7 +98,7 @@ class iImageNet100(iData):
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ]
 
-    class_order = np.arange(1000).tolist()
+    class_order = np.arange(100).tolist()
 
     def download_data(self):
         train_dir = '/mnt/mmtech01/usr/liuwenzhuo/torch_ds/imagenet100/train/'
