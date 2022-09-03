@@ -57,12 +57,13 @@ dict_imagenet100 = {"n01968897": "chambered nautilus, pearly nautilus, nautilus"
                     "n01829413": "hornbill", "n01514668": "cock"}
 
 import os
-dir_path="/mnt/mmtech01/usr/liuwenzhuo/torch_ds/imagenet100"
+source_path="/mnt/mmtech01/dataset/lzy/ILSVRC2012"
+target_path="/mnt/mmtech01/usr/liuwenzhuo/torch_ds/imagenet100"
 imagenet100_classes=list(dict_imagenet100.keys())
-all_classes=sorted(os.listdir(os.path.join(dir_path,'train')))
-for class_i in all_classes:
-    if class_i not in dict_imagenet100:
-        os.unlink(os.path.join(dir_path,'train',class_i))
-        os.unlink(os.path.join(dir_path,'val',class_i))
+
+for class_i in dict_imagenet100:
+    os.symlink(os.path.join(source_path, "train",class_i), os.path.join(target_path, "train",class_i))
+    os.symlink(os.path.join(source_path, "val",class_i), os.path.join(target_path, "val",class_i))
+
 
 
