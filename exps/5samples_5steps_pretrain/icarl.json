@@ -1,0 +1,16 @@
+{
+    "prefix": "pretrained_5samples",
+    "dataset": "cifar100",
+    "memory_size": 500,
+    "memory_per_class": 5,
+    "fixed_memory": true,
+    "shuffle": true,
+    "init_cls": 50,
+    "increment": 10,
+    "model_name": "icarl",
+    "convnet_type": "resnet50_cifar",
+    "device": ["0","1"],
+    "seed": [1993],
+    "pretrained_model": "/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt"
+}
+

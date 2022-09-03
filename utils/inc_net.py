@@ -257,11 +257,12 @@ class IncrementalNetWithBias(BaseNet):
 
 
 class DERNet(nn.Module):
-    def __init__(self, convnet_type, pretrained):
+    def __init__(self, convnet_type, pretrained, use_ssl_encoder=False):
         super(DERNet, self).__init__()
         self.convnet_type = convnet_type
         self.convnets = nn.ModuleList()
         self.pretrained = pretrained
+        self.use_ssl_encoder = use_ssl_encoder
         self.out_dim = None
         self.fc = None
         self.aux_fc = None
@@ -299,6 +300,22 @@ class DERNet(nn.Module):
     def update_fc(self, nb_classes):
         if len(self.convnets) == 0:
             self.convnets.append(get_convnet(self.convnet_type))
+            if self.use_ssl_encoder:
+                import warnings
+                ckpt_path = "/share/wenzhuoliu/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt"
+                print(f"load pretrained model from {ckpt_path}")
+                state = torch.load(ckpt_path)["state_dict"]
+                for k in list(state.keys()):
+                    if "encoder" in k:
+                        state[k.replace("encoder", "backbone")] = state[k]
+                        warnings.warn(
+                            "You are using an older checkpoint. Use a new one as some issues might arrise."
+                        )
+                    if "backbone" in k:
+                        state[k.replace("backbone.", "")] = state[k]
+                    del state[k]
+                self.convnets[0].load_state_dict(state, strict=False)
+
         else:
             self.convnets.append(get_convnet(self.convnet_type))
             self.convnets[-1].load_state_dict(self.convnets[-2].state_dict())
