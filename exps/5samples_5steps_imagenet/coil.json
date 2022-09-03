@@ -1,0 +1,18 @@
+{
+    "prefix": "5samples",
+    "dataset": "cifar100",
+    "memory_size": 500,
+    "memory_per_class": 5,
+    "fixed_memory": true,
+    "shuffle": true,
+    "init_cls": 50,
+    "increment": 10,
+    "sinkhorn":0.464,
+    "calibration_term":1.5,
+    "norm_term":3.0,
+    "reg_term":1e-3,
+    "model_name": "coil",
+    "convnet_type": "cosine_resnet50_cifar",
+    "device": ["0","1","2","3"],
+    "seed": [1993]
+}
