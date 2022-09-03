@@ -15,6 +15,18 @@ python main.py --config=./exps/5samples_10steps_pretrain/icarl.json
 python main.py --config=./exps/5samples_10steps_pretrain/coil.json
 
 
+/root/miniconda3/envs/torch/bin/python main.py --config=./exps/5samples_5steps_pretrain/ucir.json
+/root/miniconda3/envs/torch/bin/python python main.py --config=./exps/5samples_5steps_pretrain/coil.json
+/root/miniconda3/envs/torch/bin/python python main.py --config=./exps/5samples_5steps_pretrain/lwf.json
+/root/miniconda3/envs/torch/bin/python python main.py --config=./exps/5samples_5steps_pretrain/icarl.json
 
+
+
+/root/miniconda3/envs/torch/bin/python python main.py --config=./exps/5samples_10steps_pretrain/podnet.json
+/root/miniconda3/envs/torch/bin/python python main.py --config=./exps/5samples_10steps_pretrain/ucir.json
+/root/miniconda3/envs/torch/bin/python python main.py --config=./exps/5samples_10steps_pretrain/der.json
+/root/miniconda3/envs/torch/bin/python python main.py --config=./exps/5samples_10steps_pretrain/lwf.json
+/root/miniconda3/envs/torch/bin/python python main.py --config=./exps/5samples_10steps_pretrain/icarl.json
+/root/miniconda3/envs/torch/bin/python python main.py --config=./exps/5samples_10steps_pretrain/coil.json
 
 #CUDA_VISIBLE_DEVICES=4,5,6,7
