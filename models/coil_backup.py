@@ -157,8 +157,8 @@ class COIL(BaseLearner):
         )
 
         self._train(self.train_loader, self.test_loader)
-        self._reduce_exemplar(data_manager, self.samples_per_class)
-        self._construct_exemplar(data_manager, self.samples_per_class)
+        self._reduce_exemplar(data_manager, memory_size // self._total_classes)
+        self._construct_exemplar(data_manager, memory_size // self._total_classes)
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)
