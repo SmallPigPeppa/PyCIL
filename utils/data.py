@@ -101,8 +101,8 @@ class iImageNet100(iData):
     class_order = np.arange(100).tolist()
 
     def download_data(self):
-        train_dir = '/mnt/mmtech01/usr/liuwenzhuo/torch_ds/imagenet100/train/'
-        test_dir = '/mnt/mmtech01/usr/liuwenzhuo/torch_ds/imagenet100/val/'
+        train_dir = '/mnt/mmtech01/usr/liuwenzhuo/torch_ds/imagenet-subset-new/train/'
+        test_dir = '/mnt/mmtech01/usr/liuwenzhuo/torch_ds/imagenet-subset-new/val/'
 
         train_dset = datasets.ImageFolder(train_dir)
         test_dset = datasets.ImageFolder(test_dir)
