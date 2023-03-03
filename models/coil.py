@@ -137,13 +137,13 @@ class COIL(BaseLearner):
             appendent=self._get_memory(),
         )
         self.train_loader = DataLoader(
-            train_dataset, batch_size=batch_size, shuffle=True, num_workers=4
+            train_dataset, batch_size=batch_size, shuffle=True, num_workers=4,pin_memory=True
         )
         test_dataset = data_manager.get_dataset(
             np.arange(0, self._total_classes), source="test", mode="test"
         )
         self.test_loader = DataLoader(
-            test_dataset, batch_size=batch_size, shuffle=False, num_workers=4
+            test_dataset, batch_size=batch_size, shuffle=False, num_workers=4,pin_memory=True
         )
 
         self._train(self.train_loader, self.test_loader)
@@ -270,7 +270,7 @@ class COIL(BaseLearner):
                     ret_data=True,
                 )
                 idx_loader = DataLoader(
-                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4
+                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4,pin_memory=True
                 )
                 vectors, _ = self._extract_vectors(idx_loader)
                 vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
@@ -301,7 +301,7 @@ class COIL(BaseLearner):
                     ret_data=True,
                 )
                 idx_loader = DataLoader(
-                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4
+                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4,pin_memory=True
                 )
                 vectors, _ = self._extract_vectors(idx_loader)
                 vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
@@ -317,7 +317,7 @@ class COIL(BaseLearner):
                     ret_data=True,
                 )
                 idx_loader = DataLoader(
-                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4
+                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4,pin_memory=True
                 )
                 vectors, _ = self._extract_vectors(idx_loader)
                 vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T

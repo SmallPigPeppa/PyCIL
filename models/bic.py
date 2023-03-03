@@ -54,7 +54,7 @@ class BiC(BaseLearner):
                 ),
             )
             self.val_loader = DataLoader(
-                val_dset, batch_size=batch_size, shuffle=True, num_workers=num_workers
+                val_dset, batch_size=batch_size, shuffle=True, num_workers=num_workers,pin_memory=True
             )
             logging.info(
                 "Stage1 dset: {}, Stage2 dset: {}".format(
@@ -75,10 +75,10 @@ class BiC(BaseLearner):
         )
 
         self.train_loader = DataLoader(
-            train_dset, batch_size=batch_size, shuffle=True, num_workers=num_workers
+            train_dset, batch_size=batch_size, shuffle=True, num_workers=num_workers,pin_memory=True
         )
         self.test_loader = DataLoader(
-            test_dset, batch_size=batch_size, shuffle=False, num_workers=num_workers
+            test_dset, batch_size=batch_size, shuffle=False, num_workers=num_workers,pin_memory=True
         )
 
         self._log_bias_params()

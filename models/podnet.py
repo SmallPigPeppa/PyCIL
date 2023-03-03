@@ -83,10 +83,10 @@ class PODNet(BaseLearner):
             np.arange(0, self._total_classes), source="test", mode="test"
         )
         self.train_loader = DataLoader(
-            train_dset, batch_size=batch_size, shuffle=True, num_workers=num_workers
+            train_dset, batch_size=batch_size, shuffle=True, num_workers=num_workers,pin_memory=True
         )
         self.test_loader = DataLoader(
-            test_dset, batch_size=batch_size, shuffle=False, num_workers=num_workers
+            test_dset, batch_size=batch_size, shuffle=False, num_workers=num_workers,pin_memory=True
         )
 
         self._train(data_manager, self.train_loader, self.test_loader)
@@ -149,6 +149,7 @@ class PODNet(BaseLearner):
             batch_size=batch_size,
             shuffle=True,
             num_workers=num_workers,
+            pin_memory = True
         )
         logging.info(
             "The size of finetune dataset: {}".format(len(finetune_train_dataset))
