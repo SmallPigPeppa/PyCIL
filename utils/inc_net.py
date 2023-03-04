@@ -34,6 +34,11 @@ def get_convnet(convnet_type, pretrained=False):
         resnet_cifar.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
         resnet_cifar.maxpool = nn.Identity()
         return resnet_cifar
+    elif name == 'resnet50_cifar':
+        resnet_cifar = resnet50(pretrained=pretrained)
+        resnet_cifar.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
+        resnet_cifar.maxpool = nn.Identity()
+        return resnet_cifar
     else:
         raise NotImplementedError("Unknown type {}".format(convnet_type))
 
@@ -307,7 +312,7 @@ class DERNet(nn.Module):
             self.convnets.append(get_convnet(self.convnet_type))
             if self.use_ssl_encoder:
                 import warnings
-                ckpt_path = "/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt"
+                ckpt_path = "/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/byol-official/byol-resnet50-imagenet-100ep-25x5nqle-ep=99.ckpt"
                 print(f"load pretrained model from {ckpt_path}")
                 state = torch.load(ckpt_path)["state_dict"]
                 for k in list(state.keys()):
