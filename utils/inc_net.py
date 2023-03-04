@@ -34,6 +34,11 @@ def get_convnet(convnet_type, pretrained=False):
         resnet_cifar.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
         resnet_cifar.maxpool = nn.Identity()
         return resnet_cifar
+    elif name == 'resnet50_cifar':
+        resnet_cifar = resnet50(pretrained=pretrained)
+        resnet_cifar.conv1 = nn.Conv2d(3, 64, kernel_size=3, stride=1, padding=2, bias=False)
+        resnet_cifar.maxpool = nn.Identity()
+        return resnet_cifar
     else:
         raise NotImplementedError("Unknown type {}".format(convnet_type))
 
