@@ -147,13 +147,13 @@ class COIL(BaseLearner):
             appendent=self._get_memory(),
         )
         self.train_loader = DataLoader(
-            train_dataset, batch_size=batch_size, shuffle=True, num_workers=4
+            train_dataset, batch_size=batch_size, shuffle=True, num_workers=4,pin_memory=True
         )
         test_dataset = data_manager.get_dataset(
             np.arange(0, self._total_classes), source="test", mode="test"
         )
         self.test_loader = DataLoader(
-            test_dataset, batch_size=batch_size, shuffle=False, num_workers=4
+            test_dataset, batch_size=batch_size, shuffle=False, num_workers=4,pin_memory=True
         )
 
         self._train(self.train_loader, self.test_loader)
