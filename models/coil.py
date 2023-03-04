@@ -36,6 +36,16 @@ class COIL(BaseLearner):
         self.sinkhorn_reg = args["sinkhorn"]
         self.calibration_term = args["calibration_term"]
         self.args = args
+        self._memory_size = args["memory_size"]
+        self._memory_per_class = args.get("memory_per_class", None)
+        self._fixed_memory = args.get("fixed_memory", False)
+    @property
+    def samples_per_class(self):
+        if self._fixed_memory:
+            return self._memory_per_class
+        else:
+            assert self._total_classes != 0, "Total classes is 0"
+            return self._memory_size // self._total_classes
 
     def after_task(self):
         self.nextperiod_initialization = self.solving_ot()
@@ -137,18 +147,18 @@ class COIL(BaseLearner):
             appendent=self._get_memory(),
         )
         self.train_loader = DataLoader(
-            train_dataset, batch_size=batch_size, shuffle=True, num_workers=4,pin_memory=True
+            train_dataset, batch_size=batch_size, shuffle=True, num_workers=4
         )
         test_dataset = data_manager.get_dataset(
             np.arange(0, self._total_classes), source="test", mode="test"
         )
         self.test_loader = DataLoader(
-            test_dataset, batch_size=batch_size, shuffle=False, num_workers=4,pin_memory=True
+            test_dataset, batch_size=batch_size, shuffle=False, num_workers=4
         )
 
         self._train(self.train_loader, self.test_loader)
-        self._reduce_exemplar(data_manager, memory_size // self._total_classes)
-        self._construct_exemplar(data_manager, memory_size // self._total_classes)
+        self._reduce_exemplar(data_manager, self.samples_per_class)
+        self._construct_exemplar(data_manager, self.samples_per_class)
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)
@@ -270,7 +280,7 @@ class COIL(BaseLearner):
                     ret_data=True,
                 )
                 idx_loader = DataLoader(
-                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4,pin_memory=True
+                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4
                 )
                 vectors, _ = self._extract_vectors(idx_loader)
                 vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
@@ -301,7 +311,7 @@ class COIL(BaseLearner):
                     ret_data=True,
                 )
                 idx_loader = DataLoader(
-                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4,pin_memory=True
+                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4
                 )
                 vectors, _ = self._extract_vectors(idx_loader)
                 vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
@@ -317,7 +327,7 @@ class COIL(BaseLearner):
                     ret_data=True,
                 )
                 idx_loader = DataLoader(
-                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4,pin_memory=True
+                    idx_dataset, batch_size=batch_size, shuffle=False, num_workers=4
                 )
                 vectors, _ = self._extract_vectors(idx_loader)
                 vectors = (vectors.T / (np.linalg.norm(vectors.T, axis=0) + EPSILON)).T
