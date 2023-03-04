@@ -36,6 +36,16 @@ class COIL(BaseLearner):
         self.sinkhorn_reg = args["sinkhorn"]
         self.calibration_term = args["calibration_term"]
         self.args = args
+        self._memory_size = args["memory_size"]
+        self._memory_per_class = args.get("memory_per_class", None)
+        self._fixed_memory = args.get("fixed_memory", False)
+    @property
+    def samples_per_class(self):
+        if self._fixed_memory:
+            return self._memory_per_class
+        else:
+            assert self._total_classes != 0, "Total classes is 0"
+            return self._memory_size // self._total_classes
 
     def after_task(self):
         self.nextperiod_initialization = self.solving_ot()
@@ -147,8 +157,8 @@ class COIL(BaseLearner):
         )
 
         self._train(self.train_loader, self.test_loader)
-        self._reduce_exemplar(data_manager, memory_size // self._total_classes)
-        self._construct_exemplar(data_manager, memory_size // self._total_classes)
+        self._reduce_exemplar(data_manager, self.samples_per_class)
+        self._construct_exemplar(data_manager, self.samples_per_class)
 
     def _train(self, train_loader, test_loader):
         self._network.to(self._device)
