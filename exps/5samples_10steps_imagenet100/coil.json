@@ -13,6 +13,6 @@
     "reg_term":1e-3,
     "model_name": "coil",
     "convnet_type": "cosine_resnet50",
-    "device": ["0","1"],
+    "device": ["0"],
     "seed": [1993]
 }
