@@ -1,0 +1,4 @@
+CUDA_VISIBLE_DEVICES=4 bash run_10samples_5steps_imagenet100.sh &
+CUDA_VISIBLE_DEVICES=5 bash run_10samples_5steps_imagenet100_pretrain.sh &
+CUDA_VISIBLE_DEVICES=6 bash run_10samples_10steps_imagenet100.sh &
+CUDA_VISIBLE_DEVICES=7 bash run_10samples_10steps_imagenet100_pretrain.sh &
