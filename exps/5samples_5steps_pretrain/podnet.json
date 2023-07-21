@@ -9,7 +9,7 @@
     "increment": 10,
     "model_name": "podnet",
     "convnet_type": "cosine_resnet50_cifar",
-    "device": ["0","1"],
+    "device": ["0"],
     "seed": [1993],
     "pretrained_model": "/mnt/mmtech01/usr/liuwenzhuo/code/solo-learn/trained_models/byol/t3pmk238/byol-imagenet32-t3pmk238-ep=999.ckpt"
 }
