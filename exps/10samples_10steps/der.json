@@ -9,6 +9,6 @@
     "increment": 5,
     "model_name": "der",
     "convnet_type": "resnet50_cifar",
-    "device": ["0","1"],
+    "device": ["0"],
     "seed": [1993]
 }

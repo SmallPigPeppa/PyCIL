@@ -9,6 +9,6 @@
     "increment": 10,
     "model_name": "ucir",
     "convnet_type": "cosine_resnet50",
-    "device": ["0","1"],
+    "device": ["0"],
     "seed": [1993]
 }
