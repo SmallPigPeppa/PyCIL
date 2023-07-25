@@ -9,6 +9,6 @@
     "increment": 5,
     "model_name": "der",
     "convnet_type": "resnet50",
-    "device": ["0"],
+    "device": ["0", "1"],
     "seed": [1993]
 }
